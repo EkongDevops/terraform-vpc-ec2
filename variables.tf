@@ -27,3 +27,13 @@ variable "ami" {
   description = "AMI ID for EC2 instance"
   type        = string
 }
+
+variable "tags" {
+  description = "Tags to apply to all resources"
+  type        = map(string)
+  default = {
+    Project = "terraform-vpc-ec2"
+    Owner   = "Christopher"
+    Env     = "Dev"
+  }
+}
