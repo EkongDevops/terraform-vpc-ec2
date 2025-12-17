@@ -23,6 +23,12 @@ variable "instance_type" {
   type        = string
 }
 
+variable "allowed_ssh_cidr" {
+  description = "CIDR block allowed to SSH into EC2"
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
 
 variable "tags" {
   description = "Tags to apply to all resources"
