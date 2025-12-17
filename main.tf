@@ -1,23 +1,56 @@
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
+terraform {
+  required_version = ">= 1.5.0"
 
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  backend "s3" {
+    bucket = "vpcec22"
+    key    = "vpc-ec2/terraform.tfstate"
+    region = "eu-north-1"
   }
 
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
   }
 }
 
-resource "aws_instance" "this" {
-  ami                    = data.aws_ami.amazon_linux.id
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = var.security_group_ids
+provider "aws" {
+  region = var.aws_region
+}
+
+# -----------------------------
+# VPC Module
+# -----------------------------
+module "vpc" {
+  source = "./modules/vpc"
+
+  vpc_cidr            = var.vpc_cidr
+  public_subnet_cidr  = var.public_subnet_cidr
+  private_subnet_cidr = var.private_subnet_cidr
+
+  tags = var.tags
+}
+
+# -----------------------------
+# Security Group Module
+# -----------------------------
+module "security_group" {
+  source = "./modules/security-group"
+
+  vpc_id = module.vpc.vpc_id
+  tags   = var.tags
+}
+
+# -----------------------------
+# EC2 Module
+# -----------------------------
+module "ec2" {
+  source = "./modules/ec2"
+
+  instance_type      = var.instance_type
+  subnet_id          = module.vpc.public_subnet_id
+  security_group_ids = [module.security_group.security_group_id]
 
   tags = var.tags
 }

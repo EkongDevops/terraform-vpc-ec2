@@ -1,19 +1,20 @@
-variable "ami" {
-  type = string
-}
-
 variable "instance_type" {
-  type = string
+  description = "EC2 instance type"
+  type        = string
 }
 
 variable "subnet_id" {
-  type = string
+  description = "Subnet ID for EC2 instance"
+  type        = string
 }
 
 variable "security_group_ids" {
-  type = list(string)
+  description = "Security group IDs for EC2"
+  type        = list(string)
 }
 
 variable "tags" {
-  type = map(string)
+  description = "Tags to apply to EC2"
+  type        = map(string)
+  default     = {}
 }
