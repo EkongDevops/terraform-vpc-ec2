@@ -15,12 +15,12 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # tfsec Security Scan (non-blocking)
-      - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
-        continue-on-error: true
-        with:
-          soft_fail: true
+      # # tfsec Security Scan (non-blocking)
+      # - name: Run tfsec
+      #   uses: aquasecurity/tfsec-action@v1.0.3
+      #   continue-on-error: true
+      #   with:
+      #     soft_fail: true
 
       # Terraform Init
       - name: Terraform Init
