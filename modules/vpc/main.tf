@@ -1,26 +1,23 @@
-module "vpc" {
-  source = "./modules/vpc"
-
-  vpc_cidr           = var.vpc_cidr
-  public_subnet_cidr = var.public_subnet_cidr
-  private_subnet_cidr= var.private_subnet_cidr
-  tags               = var.tags
+resource "aws_vpc" "this" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags                 = var.tags
 }
 
-module "security_group" {
-  source = "./modules/security-group"
-
-  vpc_id           = module.vpc.vpc_id
-  allowed_ssh_cidr = ["0.0.0.0/0"]
-  tags             = var.tags
+resource "aws_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
 }
 
-module "ec2" {
-  source = "./modules/ec2"
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = var.public_subnet_cidr
+  map_public_ip_on_launch = true
+  tags                    = var.tags
+}
 
-  subnet_id          = module.vpc.public_subnet_id
-  instance_type      = var.instance_type
-  ami                = var.ami
-  security_group_ids = [module.security_group.security_group_id]
-  tags               = var.tags
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.this.id
+  cidr_block = var.private_subnet_cidr
+  tags       = var.tags
 }
