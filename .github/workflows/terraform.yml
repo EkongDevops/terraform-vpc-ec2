@@ -1,0 +1,32 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # tfsec Security Scan (non-blocking)
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        continue-on-error: true
+        with:
+          soft_fail: true
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
