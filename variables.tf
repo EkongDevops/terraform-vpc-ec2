@@ -23,10 +23,6 @@ variable "instance_type" {
   type        = string
 }
 
-variable "ami" {
-  description = "AMI ID for EC2 instance"
-  type        = string
-}
 
 variable "tags" {
   description = "Tags to apply to all resources"
